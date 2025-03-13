@@ -1,0 +1,46 @@
+1. Instalar globalmente el CLI de NestJS
+npm install -g @nestjs/cli
+
+2. Crear un nuevo proyecto con NestJS
+nest new my-nest-app
+
+3. Configurar el entorno y dependencias adicionales
+npm install @nestjs/typeorm typeorm pg
+
+npm install @nestjs/config
+
+4.
+import * as crypto from 'crypto';
+(globalThis as any).crypto = crypto;
+
+
+
+
+
+
+
+Paso 1: Crear el proyecto con Expo
+Utiliza el siguiente comando para crear un nuevo proyecto con el template en blanco para TypeScript:
+npx create-expo-app my-navigation-app --template expo-template-blank-typescript
+Este comando creará una carpeta llamada my-navigation-app con la configuración inicial basada en TypeScript.
+
+Paso 2: Acceder al directorio del proyecto
+Cambia al directorio del proyecto recién creado:
+cd my-navigation-app
+
+Paso 3: Instalar las dependencias iniciales
+Ejecuta el siguiente comando para instalar todas las dependencias listadas en el archivo package.json:
+npm install
+
+Paso 4: Instalar React Navigation
+Ahora, instala la dependencia principal de React Navigation:
+npm install @react-navigation/native
+Esta librería es la base para la navegación en tu aplicación.
+
+Paso 5: Instalar dependencias requeridas por React Navigation
+React Navigation requiere algunas librerías adicionales para funcionar correctamente en dispositivos nativos. Instálalas con:
+npm install react-native-screens react-native-safe-area-context
+
+Paso 6: Instalar el stack navigator
+Para manejar la navegación en pilas (por ejemplo, para navegar entre pantallas de forma secuencial), instala el stack navigator:
+npm install @react-navigation/stack
