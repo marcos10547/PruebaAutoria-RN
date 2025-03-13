@@ -9,6 +9,9 @@ npm install @nestjs/typeorm typeorm pg
 
 npm install @nestjs/config
 
+npm install joi @types/joi
+
+
 4.
 import * as crypto from 'crypto';
 (globalThis as any).crypto = crypto;
