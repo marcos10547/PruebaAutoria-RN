@@ -1,39 +1,27 @@
 "use client"
 
-import type React from "react"
-import { useEffect, useState } from "react"
+import React, { useState } from 'react'
 import {
   View,
   Text,
   FlatList,
   Image,
-  StyleSheet,
   ActivityIndicator,
-  type ListRenderItem,
+  TouchableOpacity,
+  StyleSheet,
   StatusBar,
   SafeAreaView,
-  TouchableOpacity,
-} from "react-native"
-import type { peliculas } from "./src/models/peliculas"
+  ListRenderItem,
+} from 'react-native'
+import { useFetchSongs } from './useFetchSongs'
+import type { Cancion } from './src/models/cancion'
 
 const App: React.FC = () => {
-  const [movies, setMovies] = useState<peliculas[]>([])
-  const [loading, setLoading] = useState<boolean>(true)
+  const [selectedCategory, setSelectedCategory] = useState<number>(0)
 
-  useEffect(() => {
-    fetch("http://192.168.1.34:300/peliculas")
-      .then((response) => response.json())
-      .then((data: peliculas[]) => {
-        setMovies(data)
-        setLoading(false)
-      })
-      .catch((error) => {
-        console.error("Error al obtener las películas:", error)
-        setLoading(false)
-      })
-  }, [])
+  const { songs, loading } = useFetchSongs(selectedCategory)
 
-  const renderItem: ListRenderItem<peliculas> = ({ item }) => (
+  const renderItem: ListRenderItem<Cancion> = ({ item }) => (
     <TouchableOpacity style={styles.card}>
       <View style={styles.itemContainer}>
         {item.imagen_url ? (
@@ -57,6 +45,9 @@ const App: React.FC = () => {
               {item.descripcion}
             </Text>
           )}
+          {item.categoria && (
+            <Text style={styles.category}>Categoría: {item.categoria.nombre}</Text>
+          )}
         </View>
       </View>
     </TouchableOpacity>
@@ -66,19 +57,80 @@ const App: React.FC = () => {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#6200ee" />
-        <Text style={styles.loadingText}>Cargando películas...</Text>
+        <Text style={styles.loadingText}>Cargando canciones...</Text>
       </View>
     )
   }
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#f5f5f5" />
+      <StatusBar barStyle="dark-content" backgroundColor="#fff" />
+
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Películas</Text>
+        <Text style={styles.headerTitle}>Música</Text>
       </View>
+
+      <View style={styles.filterContainer}>
+        {/* Todas */}
+        <TouchableOpacity
+          style={[styles.filterButton, selectedCategory === 0 && styles.filterButtonActive]}
+          onPress={() => setSelectedCategory(0)}
+        >
+          <Text
+            style={[
+              styles.filterButtonText,
+              selectedCategory === 0 && styles.filterButtonTextActive,
+            ]}
+          >
+            Todas
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.filterButton, selectedCategory === 1 && styles.filterButtonActive]}
+          onPress={() => setSelectedCategory(1)}
+        >
+          <Text
+            style={[
+              styles.filterButtonText,
+              selectedCategory === 1 && styles.filterButtonTextActive,
+            ]}
+          >
+            Rock
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.filterButton, selectedCategory === 2 && styles.filterButtonActive]}
+          onPress={() => setSelectedCategory(2)}
+        >
+          <Text
+            style={[
+              styles.filterButtonText,
+              selectedCategory === 2 && styles.filterButtonTextActive,
+            ]}
+          >
+            Pop
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.filterButton, selectedCategory === 7 && styles.filterButtonActive]}
+          onPress={() => setSelectedCategory(7)}
+        >
+          <Text
+            style={[
+              styles.filterButtonText,
+              selectedCategory === 7 && styles.filterButtonTextActive,
+            ]}
+          >
+            Trap
+          </Text>
+        </TouchableOpacity>
+      </View>
+
       <FlatList
-        data={movies}
+        data={songs}
         keyExtractor={(item) => item.id.toString()}
         renderItem={renderItem}
         contentContainerStyle={styles.listContainer}
@@ -91,55 +143,67 @@ const App: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "#fff",
   },
   header: {
-    paddingVertical: 16,
-    paddingHorizontal: 20,
-    backgroundColor: "#fff",
+    padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: "#e0e0e0",
-    elevation: 2,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
+    borderBottomColor: "#ccc",
   },
   headerTitle: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: "bold",
     color: "#333",
   },
+  filterContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ccc",
+    backgroundColor: "#f9f9f9",
+  },
+  filterButton: {
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    backgroundColor: "#eee",
+  },
+  filterButtonActive: {
+    backgroundColor: "#6200ee",
+  },
+  filterButtonText: {
+    color: "#333",
+    fontWeight: "600",
+  },
+  filterButtonTextActive: {
+    color: "#fff",
+  },
   listContainer: {
-    padding: 16,
-    paddingBottom: 24,
+    padding: 12,
   },
   card: {
     backgroundColor: "#fff",
-    borderRadius: 12,
-    marginBottom: 16,
-    elevation: 3,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    overflow: "hidden",
+    borderRadius: 8,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: "#ccc",
   },
   itemContainer: {
     flexDirection: "row",
-    padding: 12,
+    padding: 8,
   },
   image: {
-    width: 100,
-    height: 140,
-    borderRadius: 8,
-    backgroundColor: "#e0e0e0",
+    width: 80,
+    height: 80,
+    borderRadius: 4,
+    backgroundColor: "#ccc",
   },
   imagePlaceholder: {
-    width: 100,
-    height: 140,
-    borderRadius: 8,
-    backgroundColor: "#e0e0e0",
+    width: 80,
+    height: 80,
+    borderRadius: 4,
+    backgroundColor: "#ccc",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -149,41 +213,44 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     flex: 1,
-    marginLeft: 16,
-    justifyContent: "flex-start",
+    marginLeft: 8,
   },
   title: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: "bold",
     color: "#333",
-    marginBottom: 8,
+    marginBottom: 4,
   },
   yearBadge: {
     backgroundColor: "#6200ee",
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 16,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 8,
     alignSelf: "flex-start",
-    marginBottom: 10,
+    marginBottom: 4,
   },
   year: {
-    fontSize: 12,
     color: "#fff",
-    fontWeight: "600",
+    fontSize: 12,
   },
   description: {
     fontSize: 14,
     color: "#666",
-    lineHeight: 20,
+    lineHeight: 18,
+  },
+  category: {
+    fontSize: 12,
+    color: "#333",
+    fontStyle: "italic",
+    marginTop: 4,
   },
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#f5f5f5",
   },
   loadingText: {
-    marginTop: 12,
+    marginTop: 8,
     fontSize: 16,
     color: "#6200ee",
     fontWeight: "500",
@@ -191,4 +258,3 @@ const styles = StyleSheet.create({
 })
 
 export default App
-

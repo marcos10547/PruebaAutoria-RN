@@ -5,6 +5,7 @@ import { DatabaseModule } from './database/database.module';
 import { ConfigModule } from '@nestjs/config';
 import { validationSchema } from './config/validate';
 import { PeliculasModule } from './peliculas/peliculas.module';
+import { MusicaModule } from './musica/musica.module';
 import config from './config/config';
 
 @Module({
@@ -22,6 +23,7 @@ import config from './config/config';
     }),
     DatabaseModule,
     PeliculasModule,
+    MusicaModule,
 
   ],
 
